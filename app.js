@@ -2,6 +2,7 @@
 var fs = require("fs");
 var request = require("request");
 var dotenv = require("dotenv").config();
+var Spotify = require('node-spotify-api');
 var keys = require("./keys.js");
 require('console-wrap')();
 var liriInput = process.argv[2];
@@ -13,31 +14,63 @@ var redstart = "\x1b[31m";
 var redend = "\x1b[0m";
 
 
+
 console.clear();
 process.stdout.write(nextLine);
-process.stdout.write("\x1b[31m   ██▓     ██▓ ██▀███   ██▓\x1b[0m                         "+nextLine);
-process.stdout.write("\x1b[31m  ▓██▒    ▓██▒▓██ ▒ ██▒▓██▒\x1b[0m   -t for twitter        "+nextLine);
-process.stdout.write("\x1b[31m  ▒██░    ▒██▒▓██ ░▄█ ▒▒██▒\x1b[0m   -ts for twitterStream "+nextLine);
-process.stdout.write("\x1b[31m  ▒██░    ░██░▒██▀▀█▄  ░██░\x1b[0m   -tp for twitterPost   "+nextLine);
-process.stdout.write("\x1b[31m  ░██████▒░██░░██▓ ▒██▒░██░\x1b[0m   -s for spotify        "+nextLine);
-process.stdout.write("\x1b[31m  ░ ▒░▓  ░░▓  ░ ▒▓ ░▒▓░░▓  \x1b[0m   -o for omdb           "+nextLine);
-process.stdout.write("\x1b[31m  ░ ░ ▒  ░ ▒ ░  ░▒ ░ ▒░ ▒ ░\x1b[0m   -do for manual entry  "+nextLine);
-process.stdout.write("\x1b[31m    ░ ░    ▒ ░  ░░   ░  ▒ ░\x1b[0m   -h for help           "+nextLine);
-process.stdout.write("\x1b[31m      ░  ░ ░     ░      ░  \x1b[0m                   "+nextLine);
+process.stdout.write("\x1b[31m   ██▓     ██▓ ██▀███   ██▓\x1b[0m                         " + nextLine);
+process.stdout.write("\x1b[31m  ▓██▒    ▓██▒▓██ ▒ ██▒▓██▒\x1b[0m   -t for twitter user search       " + nextLine);
+process.stdout.write("\x1b[31m  ▒██░    ▒██▒▓██ ░▄█ ▒▒██▒\x1b[0m   -ts for twitter tag streaming " + nextLine);
+process.stdout.write("\x1b[31m  ▒██░    ░██░▒██▀▀█▄  ░██░\x1b[0m   -tp to tweet  " + nextLine);
+process.stdout.write("\x1b[31m  ░██████▒░██░░██▓ ▒██▒░██░\x1b[0m   -s for spotify        " + nextLine);
+process.stdout.write("\x1b[31m  ░ ▒░▓  ░░▓  ░ ▒▓ ░▒▓░░▓  \x1b[0m   -o for omdb           " + nextLine);
+process.stdout.write("\x1b[31m  ░ ░ ▒  ░ ▒ ░  ░▒ ░ ▒░ ▒ ░\x1b[0m   -do for manual entry  " + nextLine);
+process.stdout.write("\x1b[31m    ░ ░    ▒ ░  ░░   ░  ▒ ░\x1b[0m   -h for help           " + nextLine);
+process.stdout.write("\x1b[31m      ░  ░ ░     ░      ░  \x1b[0m                   " + nextLine);
 
 
-switch(liriInput) {
-  case "-t": myTweets(); break;
-  case "-tp": tweetPost(); break;
-  case "-s": spotifyThisSong(); break;
-  case "-o": movieThis(); break;
-  case "-ts": tweetStream(); break;
-  case "-do": doWhatItSays(); break;
-  case "h": help(); break;
+switch (liriInput) {
+  case "-t":
+    myTweets();
+    break;
+  case "-tp":
+    tweetPost();
+    break;
+  case "-s":
+    spotifyThisSong();
+    break;
+  case "-o":
+    movieThis();
+    break;
+  case "-ts":
+    tweetStream();
+    break;
+  case "-do":
+    doWhatItSays();
+    break;
+  case "-h":
+    help();
+    break;
 }
-function help(){
-  print.stdout("You dont need help");
+
+function help() {
+  console.clear();
+  process.stdout.write(nextLine);
+  process.stdout.write(redstart + " ██░ ██ ▓█████  ██▓     ██▓███  " + redend + nextLine);
+  process.stdout.write(redstart + "▓██░ ██▒▓█   ▀ ▓██▒    ▓██░  ██▒" + redend + nextLine);
+  process.stdout.write(redstart + "▒██▀▀██░▒███   ▒██░    ▓██░ ██▓▒" + redend + nextLine);
+  process.stdout.write(redstart + "░▓█ ░██ ▒▓█  ▄ ▒██░    ▒██▄█▓▒ ▒" + redend + nextLine);
+  process.stdout.write(redstart + "░▓█▒░██▓░▒████▒░██████▒▒██▒ ░  ░" + redend + nextLine);
+  process.stdout.write(redstart + " ▒ ░░▒░▒░░ ▒░ ░░ ▒░▓  ░▒▓▒░ ░  ░" + redend + nextLine);
+  process.stdout.write(redstart + " ▒ ░▒░ ░ ░ ░  ░░ ░ ▒  ░░▒ ░     " + redend + nextLine);
+  process.stdout.write(redstart + " ░  ░░ ░   ░     ░ ░   ░░       " + redend + nextLine);
+  process.stdout.write(redstart + " ░  ░  ░   ░  ░    ░  ░         " + redend + nextLine);
+  process.stdout.write(redstart + "                                " + redend + nextLine);
+  process.stdout.write(redstart + "Liri" + redend + " assists you with Twitter, Spotify, and Omdb Movie Lookup" + nextLine);
+  process.stdout.write(redstart + "Liri" + redend + " takes an operator and an argument during execution" + nextLine);
+  process.stdout.write("i.e: node app.js -tp This is a test" + nextLine);
+  process.stdout.write("The example above will post 'This is a text' to the twitter account linked in your .env file" + nextLine);
   process.exit();
+
 }
 
 function noEntry() {
@@ -46,71 +79,135 @@ function noEntry() {
 }
 
 // -s
-function spotifyThisSong(){
-  console.log("spotifyThisSong");
+function spotifyThisSong() {
+
+  var spotify = new Spotify(keys.spotify);
+
+  var fullSong = "";
+  for (i = 3; i < process.argv.length; i++) {
+    fullSong = fullSong + " " + process.argv[i];
+  }
+
+  if (!userInput) {
+    noEntry();
+  }
+
+  spotify.search({
+    type: "track",
+    query: fullSong
+  }, function (err, data) {
+    if (err) {
+      console.log(err);
+    }
+
+
+    var songs = data.tracks.items;
+    console.log("Search returned " + songs.length + " entries.");
+    // Finds the full list of artists and formats them
+    // removing the comma if theyre the last artist
+    // The rest is the format for the results
+    
+    for (var i = 0; i < songs.length; i++) {
+      var fullArtists = "";
+      if (songs[i].artists.length != 1) {
+        for (var a = 0; a < songs[i].artists.length; a++) {
+          if (a == songs[i].artists.length-1 ){
+            fullArtists = fullArtists + songs[i].artists[a].name;
+          }else{
+          fullArtists = fullArtists + songs[i].artists[a].name + ", " ;
+        }
+        }
+      } else {
+        fullArtists = songs[i].artists[0].name;
+      }
+      process.stdout.write(hr + nextLine + redstart + "Artist(s): " + redend + fullArtists);
+      process.stdout.write(nextLine + redstart + "album: " + redend + songs[i].album.name);
+      process.stdout.write(nextLine + redstart + "title: " + redend + songs[i].name);
+      if (songs[i].preview_url !== null) {
+        process.stdout.write(nextLine + redstart + "url: " + redend + songs[i].preview_url + nextLine);
+      }
+    }
+    process.stdout.write(hr + nextLine);
+
+    //TODO:  Write to log
+
+  });
+
 }
 
-function tweetPost(){
+function tweetPost() {
   var Twitter = require('twitter');
-  var client = new Twitter(keys.twitter);	
+  var client = new Twitter(keys.twitter);
   var fullTweet = "";
-  for (i = 3 ; i < process.argv.length ; i++){
-    fullTweet = fullTweet+" "+process.argv[i];
+  for (i = 3; i < process.argv.length; i++) {
+    fullTweet = fullTweet + " " + process.argv[i];
   }
 
-  var params = {status: fullTweet};
-  if(!userInput){
-    noEntry();      
+  var params = {
+    status: fullTweet
+  };
+  if (!userInput) {
+    noEntry();
   }
 
-  client.post('statuses/update', params, function(error, tweet, response) {
+  client.post('statuses/update', params, function (error, tweet, response) {
     if (!error) {
 
-      process.stdout.write("You tweeted: " + tweet + nextLine + nextLine);
+      process.stdout.write("You tweeted: " + fullTweet + nextLine + nextLine);
     }
-  }); 
+  });
 }
 // -do
-function doWhatItSays(){
+function doWhatItSays() {
   console.log("doWhatItSays");
 }
 // -t userInput
-function myTweets(){
+function myTweets() {
   var Twitter = require('twitter');
-  var client = new Twitter(keys.twitter);	
-		var text = "text";
-		var params = {screen_name: userInput, count: 20};
-		if(!userInput){
-      noEntry();      
-		}
-		client.get('statuses/user_timeline', params, function(error, tweets, response) {
-		  if (!error) {
-		  	for (var i = 0; i < tweets.length; i++) {
-          var tweetNum = i+1;
-		  		var time = tweets[i].created_at;
-		  		var timeArr = time.split(' ');
-          var output = tweetNum  + nextLine + tweets[i].text + nextLine + timeArr.slice(0,4).join('- ') + nextLine + nextLine;
-		  		process.stdout.write(output);
-		  		fs.appendFile("log.txt", + nextLine + output, function (error) {
-		  		  if (error) throw error;
-		  		  
-		  		});		  		
-		  	}
-		  	console.log(" *** results have been logged to log.txt ***");
-		  }
-		});
+  var client = new Twitter(keys.twitter);
+  var text = "text";
+  var params = {
+    screen_name: userInput,
+    count: 20
+  };
+  if (!userInput) {
+    noEntry();
+  }
+  client.get('statuses/user_timeline', params, function (error, tweets, response) {
+    if (!error) {
+      for (var i = 0; i < tweets.length; i++) {
+        var tweetNum = i + 1;
+        var time = tweets[i].created_at;
+        var timeArr = time.split(' ');
+        var output = tweetNum + nextLine + tweets[i].text + nextLine + timeArr.slice(0, 4).join('- ') + nextLine + nextLine;
+        process.stdout.write(output);
+        fs.appendFile("log.txt", +nextLine + output, function (error) {
+          if (error) throw error;
+
+        });
+      }
+      console.log(" *** results have been logged to log.txt ***");
+    }
+  });
 }
 // -ts
-function tweetStream(){
+function tweetStream() {
   var Twitter = require('twitter');
   var client = new Twitter(keys.twitter);
 
-  client.stream('statuses/filter', {track: "javascript"},  function(stream) {
-    stream.on('data', function(tweet) {
+  var fullTweet = "";
+  for (i = 3; i < process.argv.length; i++) {
+    fullTweet = fullTweet + " " + process.argv[i];
+  }
+  var params = {
+    track: fullTweet
+  };
+  client.stream('statuses/filter', params, function (stream) {
+    stream.on('data', function (tweet) {
       console.log(tweet.text);
     });
-  
-    stream.on('error', function(error) {
+
+    stream.on('error', function (error) {
       console.log(error);
     });
   });
@@ -118,32 +215,32 @@ function tweetStream(){
 
 
 // -o userInput
-function movieThis(){
+function movieThis() {
   var movie = userInput;
-  if(!movie){
+  if (!movie) {
     noEntry();
   }
   movieName = movie;
   request("http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var movieObject = JSON.parse(body);
-      var movieResults = hr + 
-      redstart + "Title: " + redend +movieObject.Title + nextLine +
-      redstart + "Year: " + redend + movieObject.Year +  nextLine +
-      redstart + "Country: " + redend + movieObject.Country +  nextLine +
-      redstart + "Director: " + redend + movieObject.Director +  nextLine +
-      redstart + "Writer: " + redend + movieObject.Writer +  nextLine +
-      redstart + "Production: " + redend + movieObject.Production +  nextLine +
-      redstart + "Language:" + redend + movieObject.Language + nextLine +
-      redstart + "Awards:" + redend + movieObject.Awards + hr +
-      redstart + "Imdb Rating: " + redend + movieObject.imdbRating+ nextLine+
+      var movieResults = hr +
+        redstart + "Title: " + redend + movieObject.Title + nextLine +
+        redstart + "Year: " + redend + movieObject.Year + nextLine +
+        redstart + "Country: " + redend + movieObject.Country + nextLine +
+        redstart + "Director: " + redend + movieObject.Director + nextLine +
+        redstart + "Writer: " + redend + movieObject.Writer + nextLine +
+        redstart + "Production: " + redend + movieObject.Production + nextLine +
+        redstart + "Language:" + redend + movieObject.Language + nextLine +
+        redstart + "Awards:" + redend + movieObject.Awards + hr +
+        redstart + "Imdb Rating: " + redend + movieObject.imdbRating + nextLine +
 
-      redstart +  movieObject.Ratings[0].Source+": " + redend + movieObject.Ratings[0].Value + nextLine +
-      redstart +  movieObject.Ratings[1].Source+": " + redend + movieObject.Ratings[1].Value + nextLine +
-      redstart +  movieObject.Ratings[2].Source+": " + redend + movieObject.Ratings[2].Value + nextLine +
-      redstart + "Metascore: " + redend + movieObject.Metascore + hr +
-      "Actors:" + nextLine + indent + movieObject.Actors + hr +
-      "Plot: " + nextLine + indent + movieObject.Plot + nextLine + nextLine + nextLine;
+        redstart + movieObject.Ratings[0].Source + ": " + redend + movieObject.Ratings[0].Value + nextLine +
+        redstart + movieObject.Ratings[1].Source + ": " + redend + movieObject.Ratings[1].Value + nextLine +
+        redstart + movieObject.Ratings[2].Source + ": " + redend + movieObject.Ratings[2].Value + nextLine +
+        redstart + "Metascore: " + redend + movieObject.Metascore + hr +
+        "Actors:" + nextLine + indent + movieObject.Actors + hr +
+        "Plot: " + nextLine + indent + movieObject.Plot + nextLine + nextLine + nextLine;
       process.stdout.write(movieResults);
       fs.appendFile("log.txt", movieResults, function (error) {
         if (error) throw error;
@@ -151,7 +248,7 @@ function movieThis(){
       });
       // console.log(movieObject);
     } else {
-      console.error("Error :"+ error);
+      console.error("Error :" + error);
       return;
     }
   });
