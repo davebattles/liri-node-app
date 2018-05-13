@@ -17,17 +17,18 @@ console.clear();
 process.stdout.write(nextLine);
 process.stdout.write("\x1b[31m   ██▓     ██▓ ██▀███   ██▓\x1b[0m                         "+nextLine);
 process.stdout.write("\x1b[31m  ▓██▒    ▓██▒▓██ ▒ ██▒▓██▒\x1b[0m   -t for twitter        "+nextLine);
-process.stdout.write("\x1b[31m  ▒██░    ▒██▒▓██ ░▄█ ▒▒██▒\x1b[0m   -ts for twitterTrack  "+nextLine);
-process.stdout.write("\x1b[31m  ▒██░    ░██░▒██▀▀█▄  ░██░\x1b[0m   -o for omdb           "+nextLine);
+process.stdout.write("\x1b[31m  ▒██░    ▒██▒▓██ ░▄█ ▒▒██▒\x1b[0m   -ts for twitterStream "+nextLine);
+process.stdout.write("\x1b[31m  ▒██░    ░██░▒██▀▀█▄  ░██░\x1b[0m   -tp for twitterPost   "+nextLine);
 process.stdout.write("\x1b[31m  ░██████▒░██░░██▓ ▒██▒░██░\x1b[0m   -s for spotify        "+nextLine);
-process.stdout.write("\x1b[31m  ░ ▒░▓  ░░▓  ░ ▒▓ ░▒▓░░▓  \x1b[0m   -do for manual entry  "+nextLine);
-process.stdout.write("\x1b[31m  ░ ░ ▒  ░ ▒ ░  ░▒ ░ ▒░ ▒ ░\x1b[0m   -h for help           "+nextLine);
-process.stdout.write("\x1b[31m    ░ ░    ▒ ░  ░░   ░  ▒ ░\x1b[0m                   "+nextLine);
+process.stdout.write("\x1b[31m  ░ ▒░▓  ░░▓  ░ ▒▓ ░▒▓░░▓  \x1b[0m   -o for omdb           "+nextLine);
+process.stdout.write("\x1b[31m  ░ ░ ▒  ░ ▒ ░  ░▒ ░ ▒░ ▒ ░\x1b[0m   -do for manual entry  "+nextLine);
+process.stdout.write("\x1b[31m    ░ ░    ▒ ░  ░░   ░  ▒ ░\x1b[0m   -h for help           "+nextLine);
 process.stdout.write("\x1b[31m      ░  ░ ░     ░      ░  \x1b[0m                   "+nextLine);
 
 
 switch(liriInput) {
   case "-t": myTweets(); break;
+  case "-tp": tweetPost(); break;
   case "-s": spotifyThisSong(); break;
   case "-o": movieThis(); break;
   case "-ts": tweetStream(); break;
@@ -49,6 +50,26 @@ function spotifyThisSong(){
   console.log("spotifyThisSong");
 }
 
+function tweetPost(){
+  var Twitter = require('twitter');
+  var client = new Twitter(keys.twitter);	
+  var fullTweet = "";
+  for (i = 3 ; i < process.argv.length ; i++){
+    fullTweet = fullTweet+" "+process.argv[i];
+  }
+
+  var params = {status: fullTweet};
+  if(!userInput){
+    noEntry();      
+  }
+
+  client.post('statuses/update', params, function(error, tweet, response) {
+    if (!error) {
+
+      process.stdout.write("You tweeted: " + tweet + nextLine + nextLine);
+    }
+  }); 
+}
 // -do
 function doWhatItSays(){
   console.log("doWhatItSays");
