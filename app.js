@@ -29,13 +29,27 @@ process.stdout.write("\x1b[31m      ░  ░ ░     ░      ░  \x1b[0m      
 
 
 switch (liriInput) {
-  case "-t":myTweets(); break;
-  case "-tp":tweetPost(); break;
-  case "-s":spotifyThisSong(); break;
-  case "-o":movieThis(); break;
-  case "-ts":tweetStream(); break;
-  case "-do":doWhatItSays(); break;
-  case "-h":help(); break;
+  case "-t":
+    myTweets();
+    break;
+  case "-tp":
+    tweetPost();
+    break;
+  case "-s":
+    spotifyThisSong();
+    break;
+  case "-o":
+    movieThis();
+    break;
+  case "-ts":
+    tweetStream();
+    break;
+  case "-do":
+    doWhatItSays();
+    break;
+  case "-h":
+    help();
+    break;
 }
 
 function help() {
@@ -75,6 +89,9 @@ function spotifyThisSong() {
   if (!userInput) {
     noEntry();
   }
+  if (doQuery == true){
+    fullSong = userInput;
+  }
   spotify.search({
     type: "track",
     query: fullSong
@@ -83,21 +100,21 @@ function spotifyThisSong() {
       console.log(err);
     }
     var songs = data.tracks.items;
-    
+
     // Finds the full list of artists and formats them
     // removing the comma if theyre the last artist
     // The rest is the format for the results
     // for (var i = 0; i < songs.length; i++) {    reduced amount of results
     var artistLog = [];
     for (var i = 0; i < 1; i++) {
-      
+
       if (songs[i].artists.length != 1) {
         for (var a = 0; a < songs[i].artists.length; a++) {
-          if (a == songs[i].artists.length-1 ){
+          if (a == songs[i].artists.length - 1) {
             fullArtists = fullArtists + songs[i].artists[a].name;
-          }else{
-          fullArtists = fullArtists + songs[i].artists[a].name + ", " ;
-        }
+          } else {
+            fullArtists = fullArtists + songs[i].artists[a].name + ", ";
+          }
         }
       } else {
         fullArtists = songs[i].artists[0].name;
@@ -109,17 +126,17 @@ function spotifyThisSong() {
         process.stdout.write(nextLine + redstart + "url: " + redend + songs[i].preview_url + nextLine);
       }
       artistLog = {
-        Artist : fullArtists,
-        Album : songs[i].album.name,
-        Title : songs[i].name,
-        URL : songs[i].preview_url
+        Artist: fullArtists,
+        Album: songs[i].album.name,
+        Title: songs[i].name,
+        URL: songs[i].preview_url
       };
 
 
 
-      
+
     }
-    fs.appendFile("log.txt",hr+ nextLine + "  Artist: " + fullArtists + "  Album: " + artistLog.Album + "  Title: " + artistLog.Title + "  URL: " + artistLog.URL + nextLine + hr, function (error) {
+    fs.appendFile("log.txt", hr + nextLine + "  Artist: " + fullArtists + "  Album: " + artistLog.Album + "  Title: " + artistLog.Title + "  URL: " + artistLog.URL + nextLine + hr, function (error) {
       if (error) throw error;
       console.log(" *** results have been logged to log.txt ***");
     });
@@ -154,8 +171,59 @@ function tweetPost() {
 }
 // -do
 function doWhatItSays() {
-  console.log("doWhatItSays");
+  fs.readFile("random.txt", "utf8", function (error, data) {
+    if (error) throw error;
 
+    var fileInput = "";
+    var cmd = data.split(" ", 1);
+
+
+    data = data.replace(cmd, "");
+    fileInput = data.replace('"', "");
+    fileInput = fileInput.replace('"', "");
+
+
+    console.log(cmd[0]);
+    console.log(fileInput);
+
+
+
+
+
+    switch (cmd[0]) {
+      case "-t":
+        userInput = fileInput;
+        myTweets();
+        break;
+      case "-tp":
+        userInput = fileInput;
+        tweetPost();
+        break;
+      case "-s":
+        userInput = fileInput;
+        doQuery = true;
+        spotifyThisSong();
+        break;
+      case "-o":
+        userInput = fileInput;
+        movieThis();
+        break;
+      case "-ts":
+        userInput = fileInput;
+        tweetStream();
+        break;
+      case "-do":
+        userInput = fileInput;
+        doWhatItSays();
+        break;
+      case "-h":
+        userInput = fileInput;
+        help();
+        break;
+    }
+
+
+  });
 }
 // -t userInput
 function myTweets() {
