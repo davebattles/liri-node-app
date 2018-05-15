@@ -173,23 +173,11 @@ function tweetPost() {
 function doWhatItSays() {
   fs.readFile("random.txt", "utf8", function (error, data) {
     if (error) throw error;
-
     var fileInput = "";
     var cmd = data.split(" ", 1);
-
-
     data = data.replace(cmd, "");
     fileInput = data.replace('"', "");
     fileInput = fileInput.replace('"', "");
-
-
-    console.log(cmd[0]);
-    console.log(fileInput);
-
-
-
-
-
     switch (cmd[0]) {
       case "-t":
         userInput = fileInput;
