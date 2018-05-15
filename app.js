@@ -80,18 +80,14 @@ function noEntry() {
 
 // -s
 function spotifyThisSong() {
-
   var spotify = new Spotify(keys.spotify);
-
   var fullSong = "";
   for (i = 3; i < process.argv.length; i++) {
     fullSong = fullSong + " " + process.argv[i];
   }
-
   if (!userInput) {
     noEntry();
   }
-
   spotify.search({
     type: "track",
     query: fullSong
@@ -99,15 +95,13 @@ function spotifyThisSong() {
     if (err) {
       console.log(err);
     }
-
-
     var songs = data.tracks.items;
-    console.log("Search returned " + songs.length + " entries.");
+    
     // Finds the full list of artists and formats them
     // removing the comma if theyre the last artist
     // The rest is the format for the results
-    
-    for (var i = 0; i < songs.length; i++) {
+    // for (var i = 0; i < songs.length; i++) {    reduced amount of results
+    for (var i = 0; i < 3; i++) {
       var fullArtists = "";
       if (songs[i].artists.length != 1) {
         for (var a = 0; a < songs[i].artists.length; a++) {
