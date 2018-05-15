@@ -25,31 +25,17 @@ process.stdout.write("\x1b[31m  ░██████▒░██░░██▓
 process.stdout.write("\x1b[31m  ░ ▒░▓  ░░▓  ░ ▒▓ ░▒▓░░▓  \x1b[0m   -o for omdb           " + nextLine);
 process.stdout.write("\x1b[31m  ░ ░ ▒  ░ ▒ ░  ░▒ ░ ▒░ ▒ ░\x1b[0m   -do for manual entry  " + nextLine);
 process.stdout.write("\x1b[31m    ░ ░    ▒ ░  ░░   ░  ▒ ░\x1b[0m   -h for help           " + nextLine);
-process.stdout.write("\x1b[31m      ░  ░ ░     ░      ░  \x1b[0m                   " + nextLine);
+process.stdout.write("\x1b[31m      ░  ░ ░     ░      ░  \x1b[0m                         " + nextLine);
 
 
 switch (liriInput) {
-  case "-t":
-    myTweets();
-    break;
-  case "-tp":
-    tweetPost();
-    break;
-  case "-s":
-    spotifyThisSong();
-    break;
-  case "-o":
-    movieThis();
-    break;
-  case "-ts":
-    tweetStream();
-    break;
-  case "-do":
-    doWhatItSays();
-    break;
-  case "-h":
-    help();
-    break;
+  case "-t":myTweets(); break;
+  case "-tp":tweetPost(); break;
+  case "-s":spotifyThisSong(); break;
+  case "-o":movieThis(); break;
+  case "-ts":tweetStream(); break;
+  case "-do":doWhatItSays(); break;
+  case "-h":help(); break;
 }
 
 function help() {
@@ -67,8 +53,8 @@ function help() {
   process.stdout.write(redstart + "                                " + redend + nextLine);
   process.stdout.write(redstart + "Liri" + redend + " assists you with Twitter, Spotify, and Omdb Movie Lookup" + nextLine);
   process.stdout.write(redstart + "Liri" + redend + " takes an operator and an argument during execution" + nextLine);
-  process.stdout.write("i.e: node app.js -tp This is a test" + nextLine);
-  process.stdout.write("The example above will post 'This is a text' to the twitter account linked in your .env file" + nextLine);
+  process.stdout.write("i.e: node app.js -tp 'This is a test'" + nextLine);
+  process.stdout.write("The example above will post This is a test  without quotations to the twitter account linked in your .env file" + nextLine);
   process.exit();
 
 }
@@ -82,6 +68,7 @@ function noEntry() {
 function spotifyThisSong() {
   var spotify = new Spotify(keys.spotify);
   var fullSong = "";
+  var fullArtists = "";
   for (i = 3; i < process.argv.length; i++) {
     fullSong = fullSong + " " + process.argv[i];
   }
@@ -101,8 +88,9 @@ function spotifyThisSong() {
     // removing the comma if theyre the last artist
     // The rest is the format for the results
     // for (var i = 0; i < songs.length; i++) {    reduced amount of results
-    for (var i = 0; i < 3; i++) {
-      var fullArtists = "";
+    var artistLog = [];
+    for (var i = 0; i < 1; i++) {
+      
       if (songs[i].artists.length != 1) {
         for (var a = 0; a < songs[i].artists.length; a++) {
           if (a == songs[i].artists.length-1 ){
@@ -120,10 +108,23 @@ function spotifyThisSong() {
       if (songs[i].preview_url !== null) {
         process.stdout.write(nextLine + redstart + "url: " + redend + songs[i].preview_url + nextLine);
       }
+      artistLog = {
+        Artist : fullArtists,
+        Album : songs[i].album.name,
+        Title : songs[i].name,
+        URL : songs[i].preview_url
+      };
+
+
+
+      
     }
+    fs.appendFile("log.txt",hr+ nextLine + "  Artist: " + fullArtists + "  Album: " + artistLog.Album + "  Title: " + artistLog.Title + "  URL: " + artistLog.URL + nextLine + hr, function (error) {
+      if (error) throw error;
+      console.log(" *** results have been logged to log.txt ***");
+    });
     process.stdout.write(hr + nextLine);
 
-    //TODO:  Write to log
 
   });
 
@@ -154,6 +155,7 @@ function tweetPost() {
 // -do
 function doWhatItSays() {
   console.log("doWhatItSays");
+
 }
 // -t userInput
 function myTweets() {
